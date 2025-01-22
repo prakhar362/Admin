@@ -1,15 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const mainLoginController = require('../controllers/Main/login');
-const mainAddController=require('../controllers/Main/addHotel');
-const mainDisplayController=require('../controllers/Main/displayHotel');
-const mainGenerateController=require('../controllers/Main/generateQR');
+const { registerMainAdmin, loginMainAdmin } = require('../controllers/Main/login');
 
-
-// Main Admin Routes:api/main/
-router.post('/login', mainLoginController); // Login
-router.post('/addHotel', mainAddController); // Add Hotel
-router.get('/displayHotel', mainDisplayController); // Display Hotels
-router.post('/generateQR', mainGenerateController); // Generate QR Code
+// Routes
+router.post('/register', registerMainAdmin); // Register Main Admin
+router.post('/login', loginMainAdmin); // Login Main Admin
 
 module.exports = router;

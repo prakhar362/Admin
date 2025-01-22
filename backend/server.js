@@ -20,32 +20,23 @@ app.use(express.static('public')); // Serve static files
 // Database connection
 mongoose
   .connect(process.env.MONGO_URL)
-  .then(() => console.log('Connected to MongoDB Successfuly'))
+  .then(() => console.log('Connected to MongoDB Successfully'))
   .catch((err) => console.error('Database connection error:', err));
+
+// Import routes
+const mainAdminRouter = require('./routes/mainAdmin'); // Adjust path based on your structure
+const guestAdminRouter = require('./routes/guestAdmin'); // Adjust path based on your structure
 
 // Routes
 app.get('/', (req, res) => {
   res.send('Welcome to the Main Admin Panel!');
 });
-/* Main Admin Routes:
-/login
-/addHotel
-/displayHotel
-/generateQR
-*/
-app.use('/api/main', );
-app.use('/api/guest', );
 
+// Main Admin Routes
+app.use('/api/main', mainAdminRouter);
 
-
-/* Guest Admin Routes:
-/login
-/displayGuestDetails
-/edit guest info/:id
-/viewguestinfo/:id
-*/
-
-
+// Guest Admin Routes
+app.use('/api/guest', guestAdminRouter);
 
 // Start the server
 app.listen(PORT, () => {
