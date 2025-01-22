@@ -27,6 +27,25 @@ mongoose
 app.get('/', (req, res) => {
   res.send('Welcome to the Main Admin Panel!');
 });
+/* Main Admin Routes:
+/login
+/addHotel
+/displayHotel
+/generateQR
+*/
+app.use('/api/main', );
+app.use('/api/guest', );
+
+
+
+/* Guest Admin Routes:
+/login
+/displayGuestDetails
+/edit guest info/:id
+/viewguestinfo/:id
+*/
+
+
 
 // Start the server
 app.listen(PORT, () => {
