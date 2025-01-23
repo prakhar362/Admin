@@ -1,3 +1,6 @@
+import { Route, Routes } from 'react-router-dom';
+import LandingPage from './pages/LandingPage';
+
 import './App.css'
 
 function App() {
@@ -5,9 +8,9 @@ function App() {
 
   return (
     <>
-    <h1 className="text-3xl font-bold underline">
-      Hello world!
-    </h1>
+    <Routes>
+    <Route exact path="/" element={<LandingPage/>} />
+    </Routes>
       
     </>
   )
