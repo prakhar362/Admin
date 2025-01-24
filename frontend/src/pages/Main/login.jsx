@@ -1,13 +1,13 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-//import { UserContext } from "../context/UserContext";  // Import UserContext
-//import { URL } from "../url"; // Make sure the path is correct
+import { UserContext } from "../../context/UserContext";  // Import UserContext
+import { URL } from "../../url"; // Make sure the path is correct
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for styling
 
 const MainLogin = () => {
   const navigate = useNavigate();
-  //const { setUser } = useContext(UserContext);  // Access setUser function from context
+  const { setUser } = useContext(UserContext);  // Access setUser function from context
 
   const [formData, setFormData] = useState({
     email: "",
@@ -34,7 +34,7 @@ const MainLogin = () => {
     if (!validateForm()) return;
 
     try {
-      const response = await fetch(`${URL}/api/auth/login`, {
+      const response = await fetch(`${URL}/api/main/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -77,7 +77,7 @@ setTimeout(2000)
 // Redirect to the home page
 // Redirect to the home page after a 3-second delay
       setTimeout(() => {
-        navigate("/home"); // Use navigate to redirect to home
+        navigate("/"); // Use navigate to redirect to home
       }, 2000); // 3-second delay for toast to finish
 
     } catch (err) {

@@ -1,13 +1,13 @@
 import React, { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-//import { UserContext } from "../context/UserContext";  // Import UserContext
-//import { URL } from "../url"; // Make sure the path is correct
+import { UserContext } from "../../context/UserContext";  // Import UserContext
+import { URL } from "../../url"; 
 import { ToastContainer, toast } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for styling
+import 'react-toastify/dist/ReactToastify.css'; 
 
 const GuestLogin = () => {
   const navigate = useNavigate();
-  //const { setUser } = useContext(UserContext);  // Access setUser function from context
+  const { setUser } = useContext(UserContext);  // Access setUser function from context
 
   const [formData, setFormData] = useState({
     email: "",
@@ -34,7 +34,7 @@ const GuestLogin = () => {
     if (!validateForm()) return;
 
     try {
-      const response = await fetch(`${URL}/api/auth/login`, {
+      const response = await fetch(`${URL}/api/guest/login`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -56,7 +56,7 @@ const GuestLogin = () => {
       console.log("Login successful:", data);
 
 // Save user credentials to local storage
-localStorage.setItem("userCredentials", JSON.stringify(data));
+localStorage.setItem("userCredentials", JSON.stringify(data.data));
 // Store the token in local storage
 localStorage.setItem("token", data.token);
 
@@ -77,7 +77,7 @@ setTimeout(2000)
 // Redirect to the home page
 // Redirect to the home page after a 3-second delay
       setTimeout(() => {
-        navigate("/home"); // Use navigate to redirect to home
+        navigate("/"); // Use navigate to redirect to home
       }, 2000); // 3-second delay for toast to finish
 
     } catch (err) {

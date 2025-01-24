@@ -49,7 +49,7 @@ const LandingPage = () => {
                     <p class="mt-8 text-xl text-black">We help you to make your remote work life easier. Build a distruction free working experience.</p>
                     <div className="flex justify-center lg:justify-start gap-4 mt-8 relative z-10">
                       <button
-                      onClick={() => {  console.log("Main Admin Button Clicked");
+                      onClick={() => {  //console.log("Main Admin Button Clicked");
                                           handleMainLogin();
                                       }}
                       className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 focus:bg-blue-600"
@@ -58,7 +58,7 @@ const LandingPage = () => {
                       </button>
 
                       <button onClick={() => {
-                      console.log("Guest Admin Button Clicked");
+                      //console.log("Guest Admin Button Clicked");
                       handleGuestLogin();}}
                       className="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 focus:bg-green-600">
                      Guest Admin Login
