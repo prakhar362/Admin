@@ -77,7 +77,7 @@ setTimeout(2000)
 // Redirect to the home page
 // Redirect to the home page after a 3-second delay
       setTimeout(() => {
-        navigate("/"); // Use navigate to redirect to home
+        navigate("/main-admin/dashboard"); // Use navigate to redirect to home
       }, 2000); // 3-second delay for toast to finish
 
     } catch (err) {
