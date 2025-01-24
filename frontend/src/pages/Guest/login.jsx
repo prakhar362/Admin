@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'; // Import the CSS for styling
 
-const MainLogin = () => {
+const GuestLogin = () => {
   const navigate = useNavigate();
   //const { setUser } = useContext(UserContext);  // Access setUser function from context
 
@@ -91,7 +91,7 @@ setTimeout(2000)
     <div className="flex flex-col min-h-screen bg-gray-200">
       <div className="flex items-center justify-center min-h-screen">
         <div className="w-full max-w-lg p-8 space-y-6 bg-white rounded-2xl shadow-md">
-          <h1 className="text-3xl font-semibold text-center text-black">Main Admin Sign In</h1>
+          <h1 className="text-3xl font-semibold text-center text-black">Guest Admin Sign In</h1>
           <p className="text-center text-gray-900">
             Enter your email and password to access your account
           </p>
@@ -155,4 +155,4 @@ setTimeout(2000)
   );
 };
 
-export default MainLogin;
+export default GuestLogin;
