@@ -4,12 +4,12 @@ import { useNavigate } from "react-router-dom";
 const LandingPage = () => {
   const navigate = useNavigate();
 
-  const handleLogin = () => {
-    navigate("/login");
+  const handleMainLogin = () => {
+    navigate("/main-admin/login");
   };
 
-  const handleRegister = () => {
-    navigate("/register");
+  const handleGuestLogin = () => {
+    navigate("/guest-admin/login");
   };
 
   return (
@@ -18,7 +18,7 @@ const LandingPage = () => {
         <div class="px-4 mx-auto sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-16 lg:h-20">
                 <div class="flex-shrink-0 font-bold text-xl">
-                    HotelFinder
+                    HotelFinder.com
                 </div>
 
                 <div class="hidden ml-auto lg:flex lg:items-center lg:justify-center lg:space-x-10">
@@ -28,11 +28,9 @@ const LandingPage = () => {
 
                     <a href="#" title="" class="text-base font-semibold text-black transition-all duration-200 hover:text-opacity-80"> Resources </a>
 
-                    <a href="#" title="" class="text-base font-semibold text-black transition-all duration-200 hover:text-opacity-80"> Pricing </a>
-
-                    
+                    <a href="#" title="" class="text-base font-semibold text-black transition-all duration-200 hover:text-opacity-80"> Pricing </a>   
                 </div>
-            </div>
+              </div>
         </div>
     </header>
 
@@ -50,31 +48,23 @@ const LandingPage = () => {
                     </h1>
                     <p class="mt-8 text-xl text-black">We help you to make your remote work life easier. Build a distruction free working experience.</p>
                     <div className="flex justify-center lg:justify-start gap-4 mt-8 relative z-10">
-  <button
-    onClick={() => {
-      console.log("Main Admin Button Clicked");
-      handleLogin();
-    }}
-    className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 focus:bg-blue-600"
-  >
-    Main Admin Login
-  </button>
-  <button
-    onClick={() => {
-      console.log("Guest Admin Button Clicked");
-      handleRegister();
-    }}
-    className="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 focus:bg-green-600"
-  >
-    Guest Admin Login
-  </button>
-  
-</div>
-                    <p class="mt-5 text-base text-black">Instant access. Smooth Operations & Great revenues.</p>
-                </div>
+                      <button
+                      onClick={() => {  console.log("Main Admin Button Clicked");
+                                          handleMainLogin();
+                                      }}
+                      className="px-6 py-3 bg-blue-500 text-white font-semibold rounded-lg hover:bg-blue-600 focus:bg-blue-600"
+                      type="submit">
+                      Main Admin Login
+                      </button>
 
-                <div class="absolute right-0 z-10 -bottom-16 lg:top-24 lg:-left-20">
-                    <img class="w-32 h-32 md:w-40 md:h-40" src="https://cdn.rareblocks.xyz/collection/celebration/images/hero/3/circular-text.png" alt="" />
+                      <button onClick={() => {
+                      console.log("Guest Admin Button Clicked");
+                      handleGuestLogin();}}
+                      className="px-6 py-3 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 focus:bg-green-600">
+                     Guest Admin Login
+                      </button>
+                </div>
+                    <p class="mt-5 text-base text-black">Instant access. Smooth Operations & Great revenues.</p>
                 </div>
             </div>
 
@@ -84,7 +74,6 @@ const LandingPage = () => {
                 </div>
 
                 <div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent"></div>
-
                 <div class="absolute bottom-0 left-0">
                     <div class="p-4 sm:p-6 lg:p-8">
                         <div class="flex items-center">
