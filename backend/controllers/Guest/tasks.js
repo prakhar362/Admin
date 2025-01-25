@@ -41,14 +41,34 @@ const guestAdd = async (req, res) => {
 
 // Display all guest details
 const guestDisplay = async (req, res) => {
+  const { hotelId } = req.body; // Extract hotelId from request body
   try {
-    const guests = await Guest.find().populate('hotelId', 'name email phone'); // Fetch all guests and populate associated hotel details
+    // Ensure hotelId exists in the request body
+    if (!hotelId) {
+      return res.status(400).json({
+        success: false,
+        message: 'Hotel ID is required',
+      });
+    }
+
+    // Fetch guests associated with the provided hotelId
+    const guests = await Guest.find({ hotelId }).populate('hotelId', 'name email phone'); // Populate hotel details
+
+    // Check if any guests are found
+    if (!guests.length) {
+      return res.status(404).json({
+        success: false,
+        message: 'No guests found for the specified hotel',
+      });
+    }
+
     res.status(200).json({
       success: true,
       message: 'Guest details retrieved successfully',
       data: guests,
     });
   } catch (error) {
+    // Handle errors gracefully
     res.status(500).json({
       success: false,
       message: 'Failed to retrieve guest details',
@@ -56,6 +76,9 @@ const guestDisplay = async (req, res) => {
     });
   }
 };
+
+
+
 
 // Edit guest details by ID
 const guestEdit = async (req, res) => {
