@@ -93,7 +93,7 @@ const Form = () => {
       <div className="flex-1 p-6 -ml-20">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold text-gray-700">Create a Hotel Post</h1>
+          <h1 className="px-4 font-extrabold text-pretty text-2xl">Create a Hotel Post</h1>
         </div>
 
         {/* Form */}

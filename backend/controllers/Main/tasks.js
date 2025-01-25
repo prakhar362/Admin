@@ -5,7 +5,7 @@ const fs = require("fs");  // For cleaning up failed uploads if necessary
 // Add Hotel (mainAddController)
 const mainAddController = async (req, res) => {
   const { name, address, website,logo } = req.body;
-  
+
   console.log("Logo filename: ",logo);
   const qrCodeData = website || name; // Use the website or name for QR code generation
 
@@ -21,12 +21,13 @@ const mainAddController = async (req, res) => {
 
     // Generate QR code
     const qrCode = await QRCode.toDataURL(qrCodeData); 
+    
 
     // Create a new hotel instance
     const newHotel = new Hotel({
       name,
       address,
-     qrCode: website,
+     qrCode: qrCode,
       logo:logo,  // store the logo file path
     });
 

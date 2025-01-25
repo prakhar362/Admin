@@ -14,8 +14,8 @@ export function UserContextProvider({ children }) {
 
         if (userCredentials && token) {
           setUser(userCredentials);
-          //console.log("User context data acquired:", userCredentials);
-          //console.log("the token: ",userCredentials.token)
+          console.log("User context data acquired:", userCredentials);
+          console.log("the token: ",userCredentials.token)
         } else {
           console.log("No user data or token found in localStorage");
         }

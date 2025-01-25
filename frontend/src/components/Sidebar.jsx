@@ -32,11 +32,8 @@ function Sidebar() {
       <div className="hidden md:flex md:w-64 md:flex-col">
         <div className="flex flex-col flex-grow pt-5 overflow-y-auto bg-white">
           <div className="flex items-center flex-shrink-0 px-4">
-            <img
-              className="w-auto h-8"
-              src="https://landingfoliocom.imgix.net/store/collection/clarity-dashboard/images/logo.svg"
-              alt="Logo"
-            />
+          <img src="https://cdn-icons-png.flaticon.com/512/1668/1668966.png" alt=""  className="max-h-9 min-w-10 "/>
+          <h3 className="px-4 font-extrabold text-pretty text-2xl">Hotel Finder</h3>
           </div>
 
           <div className="px-4 mt-8">
