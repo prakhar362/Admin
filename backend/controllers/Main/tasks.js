@@ -1,10 +1,12 @@
-const Hotel = require('../../models/Hotel'); // Ensure the Hotel model is imported
-const QRCode = require('qrcode'); // For QR code generation
+const QRCode = require("qrcode");  // Make sure you import QRCode
+const Hotel = require("../../models/Hotel");  // Assuming you have a hotel model
+const fs = require("fs");  // For cleaning up failed uploads if necessary
 
 // Add Hotel (mainAddController)
 const mainAddController = async (req, res) => {
-  const { name, address, website } = req.body;
-  const logo = req.file ? req.file.path : null; // Get the logo file path from multer
+  const { name, address, website,logo } = req.body;
+  
+  console.log("Logo filename: ",logo);
   const qrCodeData = website || name; // Use the website or name for QR code generation
 
   try {
@@ -18,15 +20,14 @@ const mainAddController = async (req, res) => {
     }
 
     // Generate QR code
-    const qrCode = await QRCode.toDataURL(qrCodeData); // Generate QR code for website or hotel name
+    const qrCode = await QRCode.toDataURL(qrCodeData); 
 
     // Create a new hotel instance
     const newHotel = new Hotel({
       name,
       address,
-      website,
-      logo,  // store the logo file path
-      qrCode, // store the generated QR code data URL
+     qrCode: website,
+      logo:logo,  // store the logo file path
     });
 
     await newHotel.save();
@@ -37,6 +38,13 @@ const mainAddController = async (req, res) => {
       data: newHotel,
     });
   } catch (error) {
+    // Clean up logo file if upload failed and was saved to the filesystem
+    if (req.file && req.file.path) {
+      fs.unlink(req.file.path, (err) => {
+        if (err) console.error('Failed to delete the uploaded file:', err);
+      });
+    }
+
     console.error(error);
     res.status(500).json({
       success: false,

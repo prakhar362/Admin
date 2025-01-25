@@ -1,63 +1,86 @@
-import React, { useState } from "react";
-import Sidebar from "@/components/sidebar";
-import { URL } from "@/url";
+import React, { useState, useEffect } from "react";
+import Sidebar from "@/components/Sidebar";
+import axios from "axios";
+import { URL } from "@/url"; // Your API URL
 
-function Form() {
-  const [formData, setFormData] = useState({
-    hotelName: "",
-    address: "",
-    logo: null, // For file upload
-    website: "", // For website URL
-  });
+const Form = () => {
+  const [name, setName] = useState(""); // Hotel name
+  const [address, setAddress] = useState(""); // Hotel address
+  const [logo, setLogo] = useState(null); // Hotel logo (image)
+  const [website, setWebsite] = useState(""); // Hotel website URL
+  const [userData, setUserData] = useState(null); // State to store user data
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+  // Fetch user info from localStorage
+  useEffect(() => {
+    const userDataString = localStorage.getItem("userCredentials");
+    if (userDataString) {
+      const parsedUserData = JSON.parse(userDataString);
+      setUserData(parsedUserData); // Store user data in state
+    }
+  }, [setUserData]);
+
+  // Upload image to backend
+  const uploadImage = async () => {
+    if (!logo) return null;
+    const formData = new FormData();
+    formData.append("file", logo);
+    formData.append("img", Date.now() + logo.name); // Unique image name
+
+    try {
+      const res = await axios.post(`${URL}/api/upload`, formData);
+      return res.data; // Image upload response
+    } catch (err) {
+      console.error("Image upload failed:", err);
+      return null;
+    }
   };
 
-  const handleFileChange = (e) => {
-    setFormData({ ...formData, logo: e.target.files[0] });
-  };
-
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const formDataToSend = new FormData();
-    formDataToSend.append("hotelName", formData.hotelName);
-    formDataToSend.append("address", formData.address);
-    formDataToSend.append("logo", formData.logo); // The file
-    formDataToSend.append("website", formData.website);
+    // Upload logo first
+    const uploadedLogo = await uploadImage();
+    if (!uploadedLogo) {
+      alert("Failed to upload logo.");
+      return;
+    }
+    console.log("Filepath: ",uploadedLogo.filePath);
+
+    const hotelData = {
+      name,
+      address,
+      logo: uploadedLogo.filePath, // Use uploaded logo URL or file path
+      website,
+    };
 
     try {
-      const response = await fetch(`${URL}/api/main/addHotel`, {
+      const res = await fetch(`${URL}/api/main/addHotel`, {
         method: "POST",
-        body: formDataToSend,
         headers: {
-            "Content-Type": "application/json",
-          },
+          "Content-Type": "application/json", // Set the content type to JSON
+          "Authorization": `Bearer ${userData.token}`, // Include the authentication token
+        },
+        body: JSON.stringify(hotelData),
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Error:", errorData.message || "Hotel addition failed");
-        alert("Failed to add hotel. Please try again.");
-        return;
+      if (!res.ok) {
+        const error = await res.json(); // Parse error response
+        throw new Error(error.message || "Failed to create hotel post.");
       }
 
-      const data = await response.json();
-      console.log("Hotel added successfully:", data);
-      alert("Hotel added successfully!");
+      const data = await res.json(); // Parse success response
+      alert("Hotel posted successfully!");
+      console.log("Saved hotel post:", data);
 
-      // Optionally, you can reset the form after submission
-      setFormData({
-        hotelName: "",
-        address: "",
-        logo: null,
-        website: "",
-      });
+      // Reset form
+      setName("");
+      setAddress("");
+      setLogo(null);
+      setWebsite("");
     } catch (err) {
-      console.error("Error during form submission:", err);
-      alert("Something went wrong. Please try again later.");
+      console.error("Failed to create hotel:", err.message);
+      alert(`Failed to create hotel: ${err.message}`);
     }
   };
 
@@ -70,7 +93,7 @@ function Form() {
       <div className="flex-1 p-6 -ml-20">
         {/* Header */}
         <div className="flex items-center justify-between mb-8">
-          <h1 className="text-2xl font-bold text-gray-700">Add a New Hotel</h1>
+          <h1 className="text-2xl font-bold text-gray-700">Create a Hotel Post</h1>
         </div>
 
         {/* Form */}
@@ -90,29 +113,10 @@ function Form() {
               type="text"
               id="hotelName"
               name="hotelName"
-              value={formData.hotelName}
-              onChange={handleInputChange}
+              value={name}
+              onChange={(e) => setName(e.target.value)}
               className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
               placeholder="Enter the hotel name"
-              required
-            />
-          </div>
-
-          {/* Logo Upload */}
-          <div>
-            <label
-              htmlFor="logo"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Logo
-            </label>
-            <input
-              type="file"
-              id="logo"
-              name="logo"
-              onChange={handleFileChange}
-              className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
-              accept="image/*"
               required
             />
           </div>
@@ -125,16 +129,35 @@ function Form() {
             >
               Address
             </label>
-            <textarea
+            <input
+              type="text"
               id="address"
               name="address"
-              value={formData.address}
-              onChange={handleInputChange}
+              value={address}
+              onChange={(e) => setAddress(e.target.value)}
               className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
               placeholder="Enter the hotel address"
-              rows={3}
               required
-            ></textarea>
+            />
+          </div>
+
+          {/* Logo Upload */}
+          <div>
+            <label
+              htmlFor="logo"
+              className="block text-sm font-medium text-gray-700"
+            >
+              Hotel Logo
+            </label>
+            <input
+              type="file"
+              id="logo"
+              name="logo"
+              onChange={(e) => setLogo(e.target.files[0])}
+              className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100"
+              accept="image/*"
+              required
+            />
           </div>
 
           {/* Website URL */}
@@ -149,26 +172,25 @@ function Form() {
               type="url"
               id="website"
               name="website"
-              value={formData.website}
-              onChange={handleInputChange}
+              value={website}
+              onChange={(e) => setWebsite(e.target.value)}
               className="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
               placeholder="Enter the hotel website URL"
+              required
             />
           </div>
 
           {/* Submit Button */}
-          <div>
-            <button
-              type="submit"
-              className="w-full px-4 py-2 text-white bg-indigo-600 rounded-md shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              Add Hotel
-            </button>
-          </div>
+          <button
+            type="submit"
+            className="w-full py-2 px-4 bg-blue-600 text-white font-semibold rounded-md shadow-sm hover:bg-blue-700 focus:ring-2 focus:ring-blue-500"
+          >
+            Create Hotel Post
+          </button>
         </form>
       </div>
     </div>
   );
-}
+};
 
 export default Form;

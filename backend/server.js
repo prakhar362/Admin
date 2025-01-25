@@ -1,6 +1,8 @@
 // Import dependencies
 const express = require('express');
 const mongoose = require('mongoose');
+const fs = require('fs');
+const path=require('path');
 const multer = require('multer');
 const bodyParser = require('body-parser');
 const cors = require('cors');
@@ -8,20 +10,6 @@ const dotenv = require('dotenv');
 
 // Load environment variables
 dotenv.config();
-
-// Set up storage configuration for multer
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, './uploads'); // Specify the folder to save uploaded files
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname)); // Set the file name
-  }
-});
-
-// Initialize multer with the storage configuration
-const upload = multer({ storage: storage, limits: { fileSize: 50 * 1024 * 1024 } }); // Set a file size limit (50MB in this case)
-
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -52,6 +40,44 @@ app.use('/api/main', mainAdminRouter);
 
 // Guest Admin Routes
 app.use('/api/guest', guestAdminRouter);
+
+const uploadDir = path.join(__dirname, 'images');
+
+// Create the images directory if it doesn't exist
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+
+app.use("/images", express.static(path.join(__dirname, "images")));
+
+// Set up multer for file uploads with destination and filename customization
+const storage = multer.diskStorage({
+  destination: (req, file, fn) => {
+    // Set the destination folder for file uploads
+    fn(null, "images"); // The "images" folder must exist in your project
+  },
+  filename: (req, file, fn) => {
+    // Generate a unique filename to avoid conflicts
+    const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
+    fn(null, uniqueSuffix + path.extname(file.originalname)); // Append the original file extension
+  },
+});
+
+// Create the multer upload instance with the storage configuration
+const upload = multer({ storage: storage });
+
+app.post("/api/upload", upload.single("file"), (req, res) => {
+  try {
+      console.log("Uploaded file info:", req.file);
+      res.status(200).json({
+          message: "Image has been uploaded successfully!",
+          filePath: `/images/${req.file.filename}`, // Return the file path
+      });
+  } catch (error) {
+      console.error("Error uploading image:", error);
+      res.status(500).json({ error: "Failed to upload image" });
+  }
+});
 
 // Start the server
 app.listen(PORT, () => {
