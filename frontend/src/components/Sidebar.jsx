@@ -102,7 +102,7 @@ function Sidebar() {
 
               <nav className="flex-1 space-y-2">
                 <NavLink
-                  to="/add-hotel"
+                  to="/main-admin/add-hotel"
                   className={({ isActive }) =>
                     `flex items-center px-4 py-2.5 text-sm font-medium rounded-lg group ${
                       isActive ? 'text-white bg-indigo-600' : 'text-gray-900 hover:text-white hover:bg-indigo-600'

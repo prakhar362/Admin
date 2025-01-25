@@ -1,12 +1,27 @@
 // Import dependencies
 const express = require('express');
 const mongoose = require('mongoose');
+const multer = require('multer');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const dotenv = require('dotenv');
 
 // Load environment variables
 dotenv.config();
+
+// Set up storage configuration for multer
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, './uploads'); // Specify the folder to save uploaded files
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // Set the file name
+  }
+});
+
+// Initialize multer with the storage configuration
+const upload = multer({ storage: storage, limits: { fileSize: 50 * 1024 * 1024 } }); // Set a file size limit (50MB in this case)
+
 
 const app = express();
 const PORT = process.env.PORT || 5000;

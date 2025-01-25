@@ -1,10 +1,11 @@
-// controllers/Main/tasks.js
 const Hotel = require('../../models/Hotel'); // Ensure the Hotel model is imported
 const QRCode = require('qrcode'); // For QR code generation
 
 // Add Hotel (mainAddController)
 const mainAddController = async (req, res) => {
-  const { name, address, logo, qrCode } = req.body;
+  const { name, address, website } = req.body;
+  const logo = req.file ? req.file.path : null; // Get the logo file path from multer
+  const qrCodeData = website || name; // Use the website or name for QR code generation
 
   try {
     // Check if the hotel already exists
@@ -16,8 +17,18 @@ const mainAddController = async (req, res) => {
       });
     }
 
+    // Generate QR code
+    const qrCode = await QRCode.toDataURL(qrCodeData); // Generate QR code for website or hotel name
+
     // Create a new hotel instance
-    const newHotel = new Hotel({ name, address, logo, qrCode });
+    const newHotel = new Hotel({
+      name,
+      address,
+      website,
+      logo,  // store the logo file path
+      qrCode, // store the generated QR code data URL
+    });
+
     await newHotel.save();
 
     res.status(201).json({
@@ -26,6 +37,7 @@ const mainAddController = async (req, res) => {
       data: newHotel,
     });
   } catch (error) {
+    console.error(error);
     res.status(500).json({
       success: false,
       message: 'Failed to add hotel',
@@ -65,7 +77,7 @@ const mainGenerateController = async (req, res) => {
       });
     }
 
-    const qrCodeUrl = await QRCode.toDataURL(hotel.qrCode); // Generate QR code for hotel URL
+    const qrCodeUrl = await QRCode.toDataURL(hotel.qrCode); // Generate QR code for the URL stored in qrCode field
 
     res.status(200).json({
       success: true,

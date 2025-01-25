@@ -4,6 +4,7 @@ import MainLogin from './pages/Main/login';
 import GuestLogin from './pages/Guest/login';
 import { UserContextProvider } from './context/UserContext';  // Import UserContextProvider
 import Mainadmindashboard from './pages/Main/dashboard';
+import Form from './pages/Main/Form';
 import './App.css'
 
 function App() {
@@ -17,6 +18,7 @@ function App() {
     <Route exact path="/main-admin/login" element={<MainLogin />} />
     <Route exact path="/guest-admin/login" element={<GuestLogin />} />
     <Route exact path="/main-admin/dashboard" element={<Mainadmindashboard />} />
+    <Route exact path="/main-admin/add-hotel" element={<Form />} />
     </Routes>
     </UserContextProvider>
       
