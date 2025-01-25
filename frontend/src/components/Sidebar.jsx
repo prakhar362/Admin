@@ -1,6 +1,32 @@
-import React from 'react';
+import React, { useContext }from 'react';
+import { NavLink } from 'react-router-dom';
+import { UserContext } from "../context/UserContext"; 
+import { useNavigate } from 'react-router-dom';
 
 function Sidebar() {
+  const { setUser } = useContext(UserContext); // Access setUser
+  const navigate = useNavigate();
+  // Handle logout
+  const handleLogout = async () => {
+    try {
+      const response = await fetch(`${URL}/api/main/logout`, {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        setUser(null); // Clear user state
+        localStorage.removeItem("userCredentials"); // Clear local storage
+        navigate("/main-admin/login"); // Redirect to login page
+        console.log("Logout successful");
+      } else {
+        console.error("Failed to logout:", await response.text());
+      }
+    } catch (err) {
+      console.error("Logout error:", err);
+    }
+  };
+  
   return (
     <div className="flex">
       <div className="hidden md:flex md:w-64 md:flex-col">
@@ -14,9 +40,7 @@ function Sidebar() {
           </div>
 
           <div className="px-4 mt-8">
-            <label htmlFor="search" className="sr-only">
-              Search
-            </label>
+            <label htmlFor="search" className="sr-only">Search</label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none">
                 <svg
@@ -50,12 +74,16 @@ function Sidebar() {
           <div className="flex flex-col flex-1 px-3 mt-6">
             <div className="space-y-4">
               <nav className="flex-1 space-y-2">
-                <a
-                  href="#"
-                  className="flex items-center px-4 py-2.5 text-sm font-medium text-white transition-all duration-200 bg-indigo-600 rounded-lg group"
+                <NavLink
+                  to="/main-admin/dashboard"
+                  className={({ isActive }) =>
+                    `flex items-center px-4 py-2.5 text-sm font-medium rounded-lg group ${
+                      isActive ? 'text-white bg-indigo-600' : 'text-gray-900 hover:text-white hover:bg-indigo-600'
+                    }`
+                  }
                 >
                   <svg
-                    className="flex-shrink-0 w-5 h-5 mr-4 text-white"
+                    className="flex-shrink-0 w-5 h-5 mr-4"
                     xmlns="http://www.w3.org/2000/svg"
                     fill="none"
                     viewBox="0 0 24 24"
@@ -69,13 +97,17 @@ function Sidebar() {
                     />
                   </svg>
                   Dashboard
-                </a>
+                </NavLink>
               </nav>
 
               <nav className="flex-1 space-y-2">
-                <a
-                  href="#"
-                  className="flex items-center px-4 py-2.5 text-sm font-medium transition-all duration-200 text-gray-900 hover:text-white rounded-lg hover:bg-indigo-600 group"
+                <NavLink
+                  to="/add-hotel"
+                  className={({ isActive }) =>
+                    `flex items-center px-4 py-2.5 text-sm font-medium rounded-lg group ${
+                      isActive ? 'text-white bg-indigo-600' : 'text-gray-900 hover:text-white hover:bg-indigo-600'
+                    }`
+                  }
                 >
                   <svg
                     className="flex-shrink-0 w-5 h-5 mr-4"
@@ -91,16 +123,20 @@ function Sidebar() {
                       d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"
                     />
                   </svg>
-                  Products
-                </a>
+                  Add Hotel
+                </NavLink>
               </nav>
 
               <hr className="border-gray-200" />
 
               <nav className="flex-1 space-y-2">
-                <a
-                  href="#"
-                  className="flex items-center px-4 py-2.5 text-sm font-medium transition-all duration-200 text-gray-900 hover:text-white rounded-lg hover:bg-indigo-600 group"
+                <NavLink
+                  to="/settings"
+                  className={({ isActive }) =>
+                    `flex items-center px-4 py-2.5 text-sm font-medium rounded-lg group ${
+                      isActive ? 'text-white bg-indigo-600' : 'text-gray-900 hover:text-white hover:bg-indigo-600'
+                    }`
+                  }
                 >
                   <svg
                     className="flex-shrink-0 w-5 h-5 mr-4"
@@ -122,27 +158,30 @@ function Sidebar() {
                     />
                   </svg>
                   Settings
-                </a>
-                <a
-                  href="#"
-                  className="flex items-center px-4 py-2.5 text-sm font-medium transition-all duration-200 text-gray-900 hover:text-white rounded-lg hover:bg-red-600 group"
-                >
-                  <svg
-                    className="flex-shrink-0 w-5 h-5 mr-4"
-                    xmlns="http://www.w3.org/2000/svg"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      d="M17 16l4-4m0 0l-4-4m4 4H7"
-                    />
-                  </svg>
-                  Logout
-                </a>
+                </NavLink>
+
+                <NavLink
+  to="#"
+  onClick={handleLogout}
+  className="flex items-center px-4 py-2.5 text-sm font-medium text-gray-900 rounded-lg hover:text-white hover:bg-red-600 group"
+>
+  <svg
+    className="flex-shrink-0 w-5 h-5 mr-4"
+    xmlns="http://www.w3.org/2000/svg"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    strokeWidth="2"
+  >
+    <path
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      d="M17 16l4-4m0 0l-4-4m4 4H7"
+    />
+  </svg>
+  Logout
+</NavLink>
+
               </nav>
             </div>
 
@@ -170,4 +209,3 @@ function Sidebar() {
 }
 
 export default Sidebar;
-

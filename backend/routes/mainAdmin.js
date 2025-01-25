@@ -9,5 +9,14 @@ router.post('/login', loginMainAdmin); // Login Main Admin
 router.post('/addHotel', mainAddController); // Add Hotel
 router.get('/displayHotel', mainDisplayController); // Display Hotels
 router.post('/generateQR', mainGenerateController); // Generate QR Code
-
+router.get("/logout", async (req, res) => {
+    try {
+      res
+        .clearCookie("token", { sameSite: "none", secure: true })
+        .status(200)
+        .json({ message: "User logged out successfully!" });
+    } catch (err) {
+      res.status(500).json({ error: "Internal Server Error" });
+    }
+  });
 module.exports = router;
