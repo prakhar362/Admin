@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors({
   origin: (origin, callback) => {
-    const allowedOrigins = ['http://localhost:5173', 'http://localhost:8081']; // Add specific origins and '*'
+    const allowedOrigins = ['https://admin-3c1i.vercel.app', 'http://localhost:8081']; // Add specific origins and '*'
     
     if (!origin || allowedOrigins.includes(origin) || origin === '*') {
       callback(null, true);
