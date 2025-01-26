@@ -3,19 +3,21 @@ import GuestSidebar from '@/components/GuestSidebar';
 import { GrView } from "react-icons/gr";
 import { URL } from '@/url';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import GuestDetailsPopup from '@/components/GuestDetailsPopup';
+import EditGuestPopup from '@/components/EditGuestPopup'; // Import the EditGuestPopup component
+import GuestDetailsPopup from '@/components/GuestDetailsPopup'; // Assuming you have a GuestDetailsPopup component
 
 function Guestadmindashboard() {
-  const [guests, setGuests] = useState([]); // State to store guest data
+  const [guests, setGuests] = useState([]); 
   const [user, setUser] = useState(null);
-  const [selectedGuest, setSelectedGuest] = useState(null); // State for the selected guest
-  const [isPopupOpen, setIsPopupOpen] = useState(false); // Popup visibility state
+  const [selectedGuest, setSelectedGuest] = useState(null); 
+  const [isEditPopupOpen, setIsEditPopupOpen] = useState(false); 
+  const [isViewPopupOpen, setIsViewPopupOpen] = useState(false); // Separate state for view popup
 
   useEffect(() => {
     const getUser = async () => {
       try {
         const userCredentials = JSON.parse(localStorage.getItem("userCredentials"));
-        console.log("Data from local: ",userCredentials);
+        console.log("Data from local: ", userCredentials);
         if (userCredentials) {
           setUser(userCredentials);
         } else {
@@ -27,58 +29,84 @@ function Guestadmindashboard() {
     };
     getUser();
   }, []);
- 
   
-    // Fetch hotels data from backend
-    useEffect(() => {
-      const fetchGuests = async () => {
+  useEffect(() => {
+    const fetchGuests = async () => {
       try {
-        // Extract hotelId from userData
-        //const hotelId = userData.user.hotelId; // Access hotelId from the user data
-        //console.log("HotelId: ",hotelId);
-        //console.log("User Effect: ",user.user);
-        const hotelId=user.user.hotelId;
+        const hotelId = user?.user?.hotelId;
+        if (!hotelId) return;
         
         const response = await fetch(`${URL}/api/guest/displayGuestDetails`, {
           method: 'POST', 
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${user.token}`, // Use token from context
+            'Authorization': `Bearer ${user.token}`, 
           },
-          body: JSON.stringify({ hotelId }), // Send hotelId in the body
+          body: JSON.stringify({ hotelId }), 
         });
-        console.log("Response Status:"); // Add this to check the status
+
         if (!response.ok) {
           throw new Error('Failed to fetch guest details');
         }
       
         const data = await response.json();
-        console.log('Guest details:', data.data);
         setGuests(data.data);
       } catch (error) {
         console.error('Error fetching guest details:', error);
       }
-      
     };
       
-      fetchGuests();
-      
-  }, [user]); // Dependency on token to re-fetch data when it changes
+    if (user) fetchGuests();
+  }, [user]);
 
   const handleEdit = (guestId) => {
     console.log(`Edit guest with ID: ${guestId}`);
-    // Add your edit logic here
+    setSelectedGuest(guestId);
+    setIsEditPopupOpen(true); // Open the edit popup
+    setIsViewPopupOpen(false); // Close the view popup if open
   };
 
   const handleView = (guest) => {
     console.log('View guest details:', guest);
-    setSelectedGuest(guest); // Set the selected guest
-    setIsPopupOpen(true);
-    
+    setSelectedGuest(guest); 
+    setIsViewPopupOpen(true); // Open the view popup
+    setIsEditPopupOpen(false); // Close the edit popup if open
   };
+
+  const fetchGuests = async () => {
+    try {
+      const hotelId = user.user.hotelId;
+      
+      const response = await fetch(`${URL}/api/guest/displayGuestDetails`, {
+        method: 'POST', 
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${user.token}`, 
+        },
+        body: JSON.stringify({ hotelId }), 
+      });
+  
+      if (!response.ok) {
+        throw new Error('Failed to fetch guest details');
+      }
+  
+      const data = await response.json();
+      setGuests(data.data);
+    } catch (error) {
+      console.error('Error fetching guest details:', error);
+    }
+  };
+
   const handleClosePopup = () => {
-    setIsPopupOpen(false);
+    setIsEditPopupOpen(false);
     setSelectedGuest(null);
+    fetchGuests(); // Refetch guests when popup closes
+  };
+
+  const handleClosePopupView = () => {
+    setIsViewPopupOpen(false);
+    setSelectedGuest(null);
+    
   };
 
   return (
@@ -87,13 +115,11 @@ function Guestadmindashboard() {
       <div className="flex-1 p-6 -ml-20">
         <div className="flex items-center justify-between mb-8">
           <h1 className="px-4 font-extrabold text-pretty text-2xl">Guest Admin Panel</h1>
-          
         </div>
 
         <div className="mt-8 bg-white rounded-lg shadow overflow-x-auto">
           <div className="p-4 border-b">
             <h2 className="text-lg font-bold text-gray-900">Guest Details</h2>
-            
           </div>
         
           <Table className="min-w-full">
@@ -121,10 +147,10 @@ function Guestadmindashboard() {
                         Edit
                       </button>
                       <button
-                        className="px-4 py-2 text-sm text-white ">
-                       <GrView className='font-black text-black h-5 w-6' onClick={() => handleView(guest)}/>
+                        className="px-4 py-2 text-sm text-white "
+                      >
+                        <GrView className='font-black text-black h-5 w-6' onClick={() => handleView(guest)} />
                       </button>
-                      
                     </TableCell>
                   </TableRow>
                 ))
@@ -135,15 +161,20 @@ function Guestadmindashboard() {
                   </TableCell>
                 </TableRow>
               )}
-              {/* Modal for displaying guest details */}
-      {/* Render the GuestDetailsPopup component */}
-      {isPopupOpen && (
-        <GuestDetailsPopup guest={selectedGuest} onClose={handleClosePopup} />
-      )}
             </TableBody>
           </Table>
         </div>
       </div>
+
+      {/* Render the View Guest Details Popup */}
+      {isViewPopupOpen && (
+        <GuestDetailsPopup guest={selectedGuest} onClose={handleClosePopupView} />
+      )}
+
+      {/* Render the Edit Guest Popup */}
+      {isEditPopupOpen && (
+        <EditGuestPopup guestId={selectedGuest} token={user.token} onClose={handleClosePopup} />
+      )}
     </div>
   );
 }

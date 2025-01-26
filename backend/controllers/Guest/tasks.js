@@ -128,7 +128,6 @@ const guestEdit = async (req, res) => {
 // View guest details by ID
 const guestView = async (req, res) => {
   const { id } = req.params;
-
   try {
     const guest = await Guest.findById(id).populate('hotelId', 'name email phone'); // Populate hotel details
 
