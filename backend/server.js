@@ -17,7 +17,7 @@ const PORT = process.env.PORT || 5000;
 // Middleware
 app.use(cors({
   origin: (origin, callback) => {
-    const allowedOrigins = ['https://hotelfinder-weld.vercel.app', 'http://localhost:8081']; // Add specific origins and '*'
+    const allowedOrigins = ['https://hotelfinder-weld.vercel.app', 'http://localhost:5173']; // Add specific origins and '*'
     
     if (!origin || allowedOrigins.includes(origin) || origin === '*') {
       callback(null, true);
