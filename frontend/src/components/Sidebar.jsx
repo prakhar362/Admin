@@ -17,7 +17,7 @@ function Sidebar() {
       if (response.ok) {
         setUser(null); // Clear user state
         localStorage.removeItem("userCredentials"); // Clear local storage
-        navigate("/main-admin/login"); // Redirect to login page
+        navigate("/"); // Redirect to landing page
         console.log("Logout successful");
       } else {
         console.error("Failed to logout:", await response.text());
