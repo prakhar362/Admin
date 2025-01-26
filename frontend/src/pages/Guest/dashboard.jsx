@@ -3,10 +3,13 @@ import GuestSidebar from '@/components/GuestSidebar';
 import { GrView } from "react-icons/gr";
 import { URL } from '@/url';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import GuestDetailsPopup from '@/components/GuestDetailsPopup';
 
 function Guestadmindashboard() {
   const [guests, setGuests] = useState([]); // State to store guest data
   const [user, setUser] = useState(null);
+  const [selectedGuest, setSelectedGuest] = useState(null); // State for the selected guest
+  const [isPopupOpen, setIsPopupOpen] = useState(false); // Popup visibility state
 
   useEffect(() => {
     const getUser = async () => {
@@ -69,7 +72,13 @@ function Guestadmindashboard() {
 
   const handleView = (guest) => {
     console.log('View guest details:', guest);
-    window.print(); // Example action: printing guest details
+    setSelectedGuest(guest); // Set the selected guest
+    setIsPopupOpen(true);
+    
+  };
+  const handleClosePopup = () => {
+    setIsPopupOpen(false);
+    setSelectedGuest(null);
   };
 
   return (
@@ -126,6 +135,11 @@ function Guestadmindashboard() {
                   </TableCell>
                 </TableRow>
               )}
+              {/* Modal for displaying guest details */}
+      {/* Render the GuestDetailsPopup component */}
+      {isPopupOpen && (
+        <GuestDetailsPopup guest={selectedGuest} onClose={handleClosePopup} />
+      )}
             </TableBody>
           </Table>
         </div>
