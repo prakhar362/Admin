@@ -5,35 +5,41 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 
 function Guestadmindashboard() {
   const [guests, setGuests] = useState([]); // State to store guest data
-  const [userData, setUserData] = useState(null); // State to store user data
-  
-    // Fetch user info from localStorage
-    useEffect(() => {
-      const userDataString = localStorage.getItem("userCredentials");
-      //console.log(userDataString);
-      if (userDataString) {
-        const parsedUserData = JSON.parse(userDataString);
-        setUserData(parsedUserData); // Store user data in state
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    const getUser = async () => {
+      try {
+        const userCredentials = JSON.parse(localStorage.getItem("userCredentials"));
+        console.log("Data from local: ",userCredentials);
+        if (userCredentials) {
+          setUser(userCredentials);
+        } else {
+          console.log("No user data or token found in localStorage");
+        }
+      } catch (err) {
+        console.error("Error parsing localStorage data:", err);
       }
-    }, []); // Empty dependency to only run once on component mount
+    };
+
+    getUser();
+  }, []);
   
     // Fetch hotels data from backend
     useEffect(() => {
       const fetchGuests = async () => {
-        if (!userData || !userData.data || !userData.data.token) {
-          console.error('No token found in userData');
-          return;
-        }
       try {
         // Extract hotelId from userData
-        const hotelId = userData.user.hotelId; // Access hotelId from the user data
-        console.log("HotelId: ",hotelId);
-      
+        //const hotelId = userData.user.hotelId; // Access hotelId from the user data
+        //console.log("HotelId: ",hotelId);
+        console.log("User Effect: ",user.user);
+        const hotelId=user.user.hotelId;
+        
         const response = await fetch(`${URL}/api/guest/displayGuestDetails`, {
-          method: 'GET', 
+          method: 'POST', 
           headers: {
             'Content-Type': 'application/json',
-            'Authorization': `Bearer ${userData.token}`, // Use token from context
+            'Authorization': `Bearer ${user.token}`, // Use token from context
           },
           body: JSON.stringify({ hotelId }), // Send hotelId in the body
         });
@@ -43,17 +49,15 @@ function Guestadmindashboard() {
         }
       
         const data = await response.json();
-        console.log('Guest details:', data);
+        console.log('Guest details:', data.data);
+        setGuests(data.data);
       } catch (error) {
         console.error('Error fetching guest details:', error);
       }
       
     };
-
-    if (userData?.data?.token) {
       fetchGuests();
-    }
-  }, [userData?.data?.token]); // Dependency on token to re-fetch data when it changes
+  }, []); // Dependency on token to re-fetch data when it changes
 
   const handleEdit = (guestId) => {
     console.log(`Edit guest with ID: ${guestId}`);
@@ -71,13 +75,15 @@ function Guestadmindashboard() {
       <div className="flex-1 p-6 -ml-20">
         <div className="flex items-center justify-between mb-8">
           <h1 className="px-4 font-extrabold text-pretty text-2xl">Guest Admin Panel</h1>
+          
         </div>
 
         <div className="mt-8 bg-white rounded-lg shadow overflow-x-auto">
           <div className="p-4 border-b">
             <h2 className="text-lg font-bold text-gray-900">Guest Details</h2>
+            
           </div>
-
+        
           <Table className="min-w-full">
             <TableHeader className="bg-gray-100 text-gray-900 font-extrabold">
               <TableRow>
@@ -108,6 +114,7 @@ function Guestadmindashboard() {
                       >
                         View
                       </button>
+                      
                     </TableCell>
                   </TableRow>
                 ))

@@ -7,7 +7,7 @@ const {guestDisplay, guestEdit,guestView,guestAdd}=require('../controllers/Guest
 router.post('/register', registerGuestAdmin); // Register Guest Admin
 router.post('/login', loginGuestAdmin); // Login Guest Admin
 router.post('/addGuest', guestAdd); // Add a new Guest Admin
-router.get('/displayGuestDetails', guestDisplay); // Display Guest Details
+router.post('/displayGuestDetails', guestDisplay); // Display Guest Details
 router.put('/edit/:id', guestEdit); // Edit Guest Info
 router.get('/view/:id', guestView); // View Guest Info
 router.get("/logout", async (req, res) => {

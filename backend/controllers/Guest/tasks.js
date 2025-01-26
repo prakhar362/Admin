@@ -52,7 +52,7 @@ const guestDisplay = async (req, res) => {
     }
 
     // Fetch guests associated with the provided hotelId
-    const guests = await Guest.find({ hotelId }).populate('hotelId', 'name email phone'); // Populate hotel details
+    const guests = await Guest.find().populate('hotelId', 'name email phone'); // Populate hotel details
 
     // Check if any guests are found
     if (!guests.length) {
