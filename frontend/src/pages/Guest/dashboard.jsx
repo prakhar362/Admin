@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import GuestSidebar from '@/components/GuestSidebar';
+import { GrView } from "react-icons/gr";
 import { URL } from '@/url';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
@@ -21,9 +22,9 @@ function Guestadmindashboard() {
         console.error("Error parsing localStorage data:", err);
       }
     };
-
     getUser();
   }, []);
+ 
   
     // Fetch hotels data from backend
     useEffect(() => {
@@ -32,7 +33,7 @@ function Guestadmindashboard() {
         // Extract hotelId from userData
         //const hotelId = userData.user.hotelId; // Access hotelId from the user data
         //console.log("HotelId: ",hotelId);
-        console.log("User Effect: ",user.user);
+        //console.log("User Effect: ",user.user);
         const hotelId=user.user.hotelId;
         
         const response = await fetch(`${URL}/api/guest/displayGuestDetails`, {
@@ -56,8 +57,10 @@ function Guestadmindashboard() {
       }
       
     };
+      
       fetchGuests();
-  }, []); // Dependency on token to re-fetch data when it changes
+      
+  }, [user]); // Dependency on token to re-fetch data when it changes
 
   const handleEdit = (guestId) => {
     console.log(`Edit guest with ID: ${guestId}`);
@@ -109,10 +112,8 @@ function Guestadmindashboard() {
                         Edit
                       </button>
                       <button
-                        className="px-4 py-2 text-sm text-white bg-green-500 rounded-lg hover:bg-green-600"
-                        onClick={() => handleView(guest)}
-                      >
-                        View
+                        className="px-4 py-2 text-sm text-white ">
+                       <GrView className='font-black text-black h-5 w-6' onClick={() => handleView(guest)}/>
                       </button>
                       
                     </TableCell>

@@ -2,7 +2,15 @@ const Guest = require('../../models/Guest');
 
 // Add a new guest to the database
 const guestAdd = async (req, res) => {
-  const { hotelId, name, email, phone } = req.body;
+  const { hotelId,
+    name,
+    email,
+    phone,
+    address,
+    purposeOfVisit,
+    stayFrom,
+    stayTo,
+    idProofNumber } = req.body;
 
   try {
     // Check if the guest already exists by email
@@ -19,7 +27,12 @@ const guestAdd = async (req, res) => {
       hotelId,
       name,
       email,
-      phone, // Phone is optional, so no error if not provided
+      phone,
+      address,
+      purposeOfVisit,
+      stayFrom,
+      stayTo,
+      idProofNumber
     });
 
     // Save the new guest to the database
@@ -52,7 +65,7 @@ const guestDisplay = async (req, res) => {
     }
 
     // Fetch guests associated with the provided hotelId
-    const guests = await Guest.find().populate('hotelId', 'name email phone'); // Populate hotel details
+    const guests = await Guest.find().populate('hotelId', 'name email phone '); // Populate hotel details
 
     // Check if any guests are found
     if (!guests.length) {
