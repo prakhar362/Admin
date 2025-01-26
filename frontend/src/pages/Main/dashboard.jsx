@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import Sidebar from '@/components/sidebar';
+import Sidebar from '@/components/Sidebar';
 import { URL } from '@/url';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
